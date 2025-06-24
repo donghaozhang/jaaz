@@ -1,0 +1,126 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Electron Desktop Integration Guide
+
+The Electron layer provides desktop application functionality, system integration, and manages the Python backend process.
+
+## Core Electron Structure
+
+### Main Process
+- **Entry Point**: [electron/main.js](mdc:electron/main.js) - Main Electron process with window management
+- **Preload Script**: [electron/preload.js](mdc:electron/preload.js) - Secure IPC bridge between main and renderer
+- **IPC Handlers**: [electron/ipcHandlers.js](mdc:electron/ipcHandlers.js) - Inter-process communication handlers
+- **Settings Service**: [electron/settingsService.js](mdc:electron/settingsService.js) - Persistent settings management
+
+## System Integration Features
+
+### Auto-Updater
+- **Update Management**: Built-in auto-updater with GitHub releases integration
+- **Update Events**: Download progress, update notifications, and installation handling
+- **User Notifications**: Update notification dialog in React frontend
+
+### Window Management
+- **Main Window**: 1200x800 default size with icon and menu bar configuration
+- **Web Security**: Disabled for local file access (images/videos)
+- **Dev Tools**: Automatic opening in development mode
+- **Cache Control**: No-cache headers for development
+
+### Process Management
+- **Python Backend**: Automatic startup and port detection for FastAPI server
+- **Port Discovery**: Dynamic port allocation starting from 57988
+- **Environment Variables**: Proxy settings, user data directory, and packaging detection
+- **Process Cleanup**: Proper cleanup on application exit
+
+## ComfyUI Integration
+
+### Installation Management
+- **Installer**: [electron/comfyUIInstaller.js](mdc:electron/comfyUIInstaller.js) - ComfyUI installation automation
+- **Manager**: [electron/comfyUIManager.js](mdc:electron/comfyUIManager.js) - ComfyUI process management
+- **Auto-Start**: Automatic ComfyUI startup on application launch
+- **Installation Detection**: Check for existing ComfyUI installations
+
+### Testing Infrastructure
+- **Test Directory**: [electron/test/](mdc:electron/test/)
+  - [comfyUIInstaller/](mdc:electron/test/comfyUIInstaller/) - ComfyUI installer tests
+    - [core-functions.test.js](mdc:electron/test/comfyUIInstaller/core-functions.test.js)
+    - [download-functions.test.js](mdc:electron/test/comfyUIInstaller/download-functions.test.js)
+    - [process-management.test.js](mdc:electron/test/comfyUIInstaller/process-management.test.js)
+
+## IPC Communication
+
+### Frontend-Backend Communication
+- **Secure Context**: Context isolation enabled with preload script
+- **API Bridge**: Exposed `window.electronAPI` for secure communication
+- **Event Handling**: Bidirectional communication between renderer and main process
+
+### Key IPC Channels
+- **Settings Management**: Configuration persistence and retrieval
+- **File Operations**: File system access and management
+- **System Integration**: OS-specific functionality
+- **Update Management**: Auto-updater control and status
+
+## Build & Packaging
+
+### Build Configuration
+- **Root Package**: [package.json](mdc:package.json) - Electron builder configuration
+- **Build Scripts**: Platform-specific build commands (Windows, macOS, Linux)
+- **Resource Bundling**: Python server and React frontend packaging
+
+### Platform Support
+- **Windows**: NSIS installer with custom icon ([assets/icons/jaaz.ico](mdc:assets/icons/jaaz.ico))
+- **macOS**: DMG and ZIP with code signing and notarization ([assets/icons/jaaz.icns](mdc:assets/icons/jaaz.icns))
+- **Linux**: AppImage and DEB packages
+
+### Code Signing & Security
+- **macOS Entitlements**: [entitlements.mac.plist](mdc:entitlements.mac.plist) - Security permissions
+- **Notarization**: [scripts/notarize.js](mdc:scripts/notarize.js) - macOS notarization script
+- **Hardened Runtime**: Security features for macOS distribution
+
+## Development Workflow
+
+### Development Mode
+- **Concurrent Execution**: React dev server + Electron main process
+- **Hot Reload**: Vite dev server on port 5174
+- **Debug Tools**: DevTools automatically opened
+- **Environment Detection**: `NODE_ENV=development` handling
+
+### Production Mode
+- **Static Serving**: Built React app served by Python backend
+- **Resource Optimization**: Bundled assets and optimized builds
+- **Update Mechanism**: GitHub releases integration for updates
+
+## System Requirements
+
+### Environment Variables
+- **UI_DIST_DIR**: React build directory path
+- **USER_DATA_DIR**: User data storage location
+- **BASE_API_URL**: API endpoint configuration
+- **IS_PACKAGED**: Packaging detection flag
+
+### Proxy Configuration
+- **Bypass Settings**: Localhost and 127.0.0.1 bypass for Ollama
+- **Proxy Integration**: System proxy settings detection and application
+- **Environment Variables**: NO_PROXY and no_proxy configuration
+
+### Logging System
+- **Log File**: `~/jaaz-log.txt` for debugging
+- **Console Redirection**: stdout/stderr capture
+- **Timestamped Logs**: Automatic timestamp addition
+- **Error Tracking**: Separate error logging with timestamps
+
+## Asset Management
+
+### Icons & Branding
+- **Application Icons**: [assets/icons/](mdc:assets/icons/) - Platform-specific icons
+  - [jaaz.png](mdc:assets/icons/jaaz.png) - General purpose icon
+  - [jaaz.ico](mdc:assets/icons/jaaz.ico) - Windows icon
+  - [jaaz.icns](mdc:assets/icons/jaaz.icns) - macOS icon
+- **Alternative Icons**: Unicorn-themed icons for branding variants
+
+### Resource Bundling
+- **Extra Resources**: Python server dist and React build inclusion
+- **Asset Optimization**: Icon and resource optimization for distribution
+- **Platform-Specific**: Different assets for different operating systems

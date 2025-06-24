@@ -1,0 +1,67 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Jaaz - AI Design Agent Project Overview
+
+Jaaz is a local desktop AI design agent application that serves as a free alternative to Lovart. It enables users to design, edit, and generate images, posters, storyboards, etc., with a creative canvas board for fast iterations and layout publishing.
+
+## Architecture Overview
+
+This is an **Electron desktop application** with a three-tier architecture:
+
+### 1. Frontend - React Application
+- **Location**: [react/](mdc:react/) directory
+- **Framework**: React 19 with TypeScript and Vite
+- **Key Libraries**: 
+  - TanStack Router for routing
+  - Radix UI for components
+  - Tailwind CSS for styling
+  - Excalidraw for canvas functionality
+  - Socket.io for real-time communication
+- **Entry Point**: [react/src/main.tsx](mdc:react/src/main.tsx)
+- **Main App**: [react/src/App.tsx](mdc:react/src/App.tsx)
+
+### 2. Backend - FastAPI Python Server
+- **Location**: [server/](mdc:server/) directory
+- **Framework**: FastAPI with asyncio
+- **Key Features**:
+  - RESTful APIs for chat, canvas, settings
+  - WebSocket support for real-time communication
+  - Integration with AI models (OpenAI, Anthropic, Ollama)
+  - ComfyUI integration for image generation
+  - LangGraph for agent workflows
+- **Entry Point**: [server/main.py](mdc:server/main.py)
+- **Dependencies**: [server/requirements.txt](mdc:server/requirements.txt)
+
+### 3. Desktop Shell - Electron
+- **Location**: [electron/](mdc:electron/) directory
+- **Main Process**: [electron/main.js](mdc:electron/main.js)
+- **Preload Script**: [electron/preload.js](mdc:electron/preload.js)
+- **Features**:
+  - Auto-updater functionality
+  - ComfyUI installation and management
+  - System integration and file handling
+
+## Key Features
+
+1. **AI Design Agent**: LLM-powered agent that can write prompts and batch generate images
+2. **Local AI Support**: Ollama integration for local LLM usage
+3. **ComfyUI Integration**: Free local image generation with Stable Diffusion, Flux Dev, etc.
+4. **Image Editing**: Flux Kontext for object removal, style transfer, consistent character generation
+5. **Canvas & Storyboard**: Infinite canvas for creative workflows
+6. **Multi-Provider Support**: Claude, OpenAI, Gemini via API keys
+
+## Development Setup
+
+- **Frontend Dev**: `cd react && npm run dev` (runs on port 5174)
+- **Backend Dev**: `cd server && python main.py` (runs on port 57988)
+- **Electron Dev**: `npm run dev` (runs both frontend and electron)
+- **Full Build**: `npm run build:electron`
+
+## Package Configuration
+
+- **Root Package**: [package.json](mdc:package.json) - Electron app configuration
+- **React Package**: [react/package.json](mdc:react/package.json) - Frontend dependencies
+- **Python Requirements**: [server/requirements.txt](mdc:server/requirements.txt) - Backend dependencies

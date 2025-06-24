@@ -1,0 +1,229 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Development Workflow & Best Practices
+
+This guide covers the complete development workflow for the Jaaz AI design agent application.
+
+## Development Environment Setup
+
+### Prerequisites
+- **Node.js**: Latest LTS version for Electron and React
+- **Python**: 3.8+ for FastAPI backend
+- **Git**: Version control
+- **VS Code/Cursor**: Recommended IDE with extensions
+
+### Initial Setup
+```bash
+# Clone repository
+git clone https://github.com/11cafe/localart
+cd jaaz
+
+# Install root dependencies (Electron)
+npm install
+
+# Install React frontend dependencies
+cd react
+npm install --force
+cd ..
+
+# Install Python backend dependencies
+cd server
+pip install -r requirements.txt
+cd ..
+```
+
+## Development Commands
+
+### Frontend Development
+```bash
+# Start React dev server (port 5174)
+cd react && npm run dev
+
+# Build React for production
+cd react && npm run build
+
+# Lint React code
+cd react && npm run lint
+```
+
+### Backend Development
+```bash
+# Start Python FastAPI server (port 57988)
+cd server && python main.py
+
+# Start with custom port
+cd server && python main.py --port 8000
+```
+
+### Electron Development
+```bash
+# Start Electron in development mode
+npm run dev:electron
+
+# Start full development (React + Electron)
+npm run dev
+
+# Build Electron app for current platform
+npm run build:electron
+
+# Build for specific platforms
+npm run build:win
+npm run build:mac
+npm run build:linux
+```
+
+## Project Structure Guidelines
+
+### File Organization
+- **React Components**: Organize by feature in [react/src/components/](mdc:react/src/components/)
+- **API Services**: Keep API calls in [react/src/api/](mdc:react/src/api/)
+- **Backend Routes**: Group related endpoints in [server/routers/](mdc:server/routers/)
+- **Services**: Business logic in [server/services/](mdc:server/services/)
+- **Shared Types**: TypeScript definitions in [react/src/types/](mdc:react/src/types/)
+
+### Naming Conventions
+- **Components**: PascalCase (e.g., `ChatMessage.tsx`)
+- **Hooks**: camelCase with "use" prefix (e.g., `useTheme.ts`)
+- **Services**: camelCase with descriptive names (e.g., `chat_service.py`)
+- **Constants**: UPPER_SNAKE_CASE (e.g., `API_BASE_URL`)
+
+## Code Quality Standards
+
+### TypeScript Best Practices
+- **Strict Mode**: Enable strict TypeScript checking
+- **Type Definitions**: Use proper types, avoid `any`
+- **Interface Definitions**: Define interfaces in [react/src/types/types.ts](mdc:react/src/types/types.ts)
+- **API Types**: Keep API response types consistent between frontend and backend
+
+### React Best Practices
+- **Functional Components**: Use function components with hooks
+- **Custom Hooks**: Extract reusable logic into custom hooks
+- **Context Usage**: Use React Context for global state
+- **Error Boundaries**: Implement error boundaries for robustness
+
+### Python Best Practices
+- **Async/Await**: Use async functions for I/O operations
+- **Type Hints**: Add type hints to function signatures
+- **Error Handling**: Proper exception handling and logging
+- **Service Layer**: Keep business logic in services, not routes
+
+## Testing Strategy
+
+### Frontend Testing
+- **Test Runner**: Vitest for unit and integration tests
+- **Test Location**: Tests alongside components or in `__tests__` directories
+- **Coverage**: Aim for >80% coverage on critical components
+
+### Backend Testing
+- **Unit Tests**: Test individual functions and services
+- **Integration Tests**: Test API endpoints and database operations
+- **Test Database**: Use separate test database for isolation
+
+### Electron Testing
+- **ComfyUI Tests**: [electron/test/comfyUIInstaller/](mdc:electron/test/comfyUIInstaller/)
+- **IPC Testing**: Test inter-process communication
+- **E2E Testing**: End-to-end testing of complete workflows
+
+## Build & Deployment
+
+### Development Builds
+- **React**: Vite dev server with hot reload
+- **Python**: Direct execution with auto-reload
+- **Electron**: Development mode with DevTools
+
+### Production Builds
+- **React**: Optimized bundle with tree shaking
+- **Python**: PyInstaller executable creation
+- **Electron**: Platform-specific installers
+
+### Release Process
+1. **Version Bump**: Update version in [package.json](mdc:package.json)
+2. **Build All**: Create builds for all supported platforms
+3. **Testing**: Comprehensive testing on target platforms
+4. **GitHub Release**: Create release with auto-updater support
+
+## Database Management
+
+### Migration System
+- **Migration Files**: [server/services/migrations/](mdc:server/services/migrations/)
+- **Version Control**: Sequential version numbers (v1, v2, v3, etc.)
+- **Schema Changes**: Always create new migration files
+- **Rollback**: Plan for rollback scenarios
+
+### Database Operations
+- **SQLite**: Local database for user data and settings
+- **Async Operations**: Use aiosqlite for non-blocking database access
+- **Connection Management**: Proper connection pooling and cleanup
+
+## API Integration Guidelines
+
+### AI Model Integration
+- **Provider Abstraction**: Use base classes for different AI providers
+- **Error Handling**: Graceful degradation when services are unavailable
+- **Rate Limiting**: Respect API rate limits and implement backoff
+- **Configuration**: Store API keys securely in user settings
+
+### WebSocket Communication
+- **Real-time Updates**: Use WebSocket for live chat and canvas updates
+- **Connection Management**: Handle disconnections and reconnections
+- **Message Types**: Define clear message types and schemas
+- **Error Recovery**: Implement automatic reconnection logic
+
+## Security Considerations
+
+### API Security
+- **Input Validation**: Validate all user inputs
+- **CORS Configuration**: Proper CORS setup for web requests
+- **File Upload**: Secure file upload handling
+- **Environment Variables**: Use environment variables for sensitive data
+
+### Electron Security
+- **Context Isolation**: Enable context isolation in preload scripts
+- **Node Integration**: Disable node integration in renderer
+- **Content Security Policy**: Implement CSP for web content
+- **File System Access**: Restrict file system access to necessary directories
+
+## Performance Optimization
+
+### Frontend Performance
+- **Code Splitting**: Implement route-based code splitting
+- **Image Optimization**: Optimize images and implement lazy loading
+- **Bundle Analysis**: Regular bundle size analysis
+- **Caching**: Implement proper caching strategies
+
+### Backend Performance
+- **Async Operations**: Use async/await for I/O operations
+- **Database Optimization**: Optimize database queries and indexing
+- **Caching**: Implement response caching where appropriate
+- **Resource Management**: Proper cleanup of resources and connections
+
+## Debugging & Monitoring
+
+### Development Debugging
+- **React DevTools**: Use React DevTools for component debugging
+- **Python Debugger**: Use pdb or IDE debugger for backend debugging
+- **Electron DevTools**: Access DevTools in Electron renderer process
+- **Network Monitoring**: Monitor API calls and WebSocket connections
+
+### Production Monitoring
+- **Error Logging**: Comprehensive error logging and reporting
+- **Performance Metrics**: Monitor application performance
+- **User Analytics**: Track user interactions and feature usage
+- **Crash Reporting**: Implement crash reporting for desktop app
+
+## Documentation Standards
+
+### Code Documentation
+- **JSDoc**: Document React components and functions
+- **Python Docstrings**: Document Python functions and classes
+- **README Files**: Maintain README files for each major directory
+- **API Documentation**: Document API endpoints and schemas
+
+### User Documentation
+- **Feature Guides**: Create guides for major features
+- **Installation Instructions**: Clear setup and installation guides
+- **Troubleshooting**: Common issues and solutions
+- **Changelog**: Maintain detailed changelog for releases

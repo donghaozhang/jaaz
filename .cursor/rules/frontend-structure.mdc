@@ -1,0 +1,102 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Frontend Structure & Components Guide
+
+The frontend is a React 19 application built with TypeScript, Vite, and modern React patterns.
+
+## Core Application Structure
+
+### Entry Points
+- **Main Entry**: [react/src/main.tsx](mdc:react/src/main.tsx) - Application bootstrap
+- **App Component**: [react/src/App.tsx](mdc:react/src/App.tsx) - Root component with providers
+- **Root Route**: [react/src/routes/__root.tsx](mdc:react/src/routes/__root.tsx) - Router root
+
+### Routing System (TanStack Router)
+- **Route Tree**: [react/src/route-tree.gen.ts](mdc:react/src/route-tree.gen.ts) - Auto-generated routes
+- **Routes Directory**: [react/src/routes/](mdc:react/src/routes/)
+  - [index.tsx](mdc:react/src/routes/index.tsx) - Home page
+  - [canvas.$id.tsx](mdc:react/src/routes/canvas.$id.tsx) - Canvas editor
+  - [agent_studio.tsx](mdc:react/src/routes/agent_studio.tsx) - Agent workflow editor
+  - [knowledge.tsx](mdc:react/src/routes/knowledge.tsx) - Knowledge management
+
+## Component Organization
+
+### Core Feature Components
+- **Chat System**: [react/src/components/chat/](mdc:react/src/components/chat/)
+  - [Chat.tsx](mdc:react/src/components/chat/Chat.tsx) - Main chat interface
+  - [Message/](mdc:react/src/components/chat/Message/) - Message components
+  - [ModelSelector.tsx](mdc:react/src/components/chat/ModelSelector.tsx) - AI model selection
+- **Canvas System**: [react/src/components/canvas/](mdc:react/src/components/canvas/)
+  - [CanvasExcali.tsx](mdc:react/src/components/canvas/CanvasExcali.tsx) - Excalidraw integration
+  - [menu/](mdc:react/src/components/canvas/menu/) - Canvas menu components
+- **Agent Studio**: [react/src/components/agent_studio/](mdc:react/src/components/agent_studio/)
+  - [AgentStudio.tsx](mdc:react/src/components/agent_studio/AgentStudio.tsx) - Visual agent editor
+  - [AgentNode.tsx](mdc:react/src/components/agent_studio/AgentNode.tsx) - Agent workflow nodes
+
+### UI & Layout Components
+- **UI Components**: [react/src/components/ui/](mdc:react/src/components/ui/) - Reusable UI primitives (Radix-based)
+- **Sidebar**: [react/src/components/sidebar/](mdc:react/src/components/sidebar/) - Navigation sidebar
+- **Settings**: [react/src/components/settings/](mdc:react/src/components/settings/) - Configuration dialogs
+- **Authentication**: [react/src/components/auth/](mdc:react/src/components/auth/) - Login/user management
+
+### Specialized Components
+- **ComfyUI Integration**: [react/src/components/comfyui/](mdc:react/src/components/comfyui/) - ComfyUI installation/management
+- **Home Interface**: [react/src/components/home/](mdc:react/src/components/home/) - Project/canvas management
+- **Knowledge Base**: [react/src/components/knowledge/](mdc:react/src/components/knowledge/) - Document management
+
+## State Management
+
+### Context Providers
+- **Theme Context**: [react/src/contexts/theme.tsx](mdc:react/src/contexts/theme.tsx) - Theme management
+- **Auth Context**: [react/src/contexts/AuthContext.tsx](mdc:react/src/contexts/AuthContext.tsx) - User authentication
+- **Config Context**: [react/src/contexts/configs.tsx](mdc:react/src/contexts/configs.tsx) - App configuration
+- **Canvas Context**: [react/src/contexts/canvas.tsx](mdc:react/src/contexts/canvas.tsx) - Canvas state
+- **Socket Context**: [react/src/contexts/socket.tsx](mdc:react/src/contexts/socket.tsx) - WebSocket connection
+
+### Zustand Stores
+- **Canvas Store**: [react/src/stores/canvas.ts](mdc:react/src/stores/canvas.ts) - Canvas state management
+- **Config Store**: [react/src/stores/configs.ts](mdc:react/src/stores/configs.ts) - Configuration state
+
+### Custom Hooks
+- **Hooks Directory**: [react/src/hooks/](mdc:react/src/hooks/)
+  - [use-theme.ts](mdc:react/src/hooks/use-theme.ts) - Theme hook
+  - [use-mobile.ts](mdc:react/src/hooks/use-mobile.ts) - Mobile detection
+  - [use-balance.ts](mdc:react/src/hooks/use-balance.ts) - Account balance
+  - [use-notifications.ts](mdc:react/src/hooks/use-notifications.ts) - Notification system
+
+## API Integration
+
+### API Services
+- **API Directory**: [react/src/api/](mdc:react/src/api/)
+  - [auth.ts](mdc:react/src/api/auth.ts) - Authentication API
+  - [chat.ts](mdc:react/src/api/chat.ts) - Chat/messaging API
+  - [canvas.ts](mdc:react/src/api/canvas.ts) - Canvas operations
+  - [settings.ts](mdc:react/src/api/settings.ts) - Settings management
+  - [model.ts](mdc:react/src/api/model.ts) - AI model operations
+
+### Real-time Communication
+- **Socket Integration**: [react/src/lib/socket.ts](mdc:react/src/lib/socket.ts) - Socket.io client
+- **Event System**: [react/src/lib/event.ts](mdc:react/src/lib/event.ts) - Event management
+
+## Styling & Assets
+
+### Styling System
+- **Tailwind Config**: [react/tailwind.config.js](mdc:react/tailwind.config.js) - Tailwind configuration
+- **CSS Files**: [react/src/assets/style/](mdc:react/src/assets/style/)
+  - [App.css](mdc:react/src/assets/style/App.css) - Global styles
+  - [canvas.css](mdc:react/src/assets/style/canvas.css) - Canvas-specific styles
+  - [animations.css](mdc:react/src/assets/style/animations.css) - Animation styles
+
+### Internationalization
+- **i18n System**: [react/src/i18n/](mdc:react/src/i18n/)
+  - [index.ts](mdc:react/src/i18n/index.ts) - i18n configuration
+  - [locales/](mdc:react/src/i18n/locales/) - Translation files (en, zh-CN)
+
+## Build Configuration
+
+- **Vite Config**: [react/vite.config.ts](mdc:react/vite.config.ts) - Build configuration
+- **TypeScript Config**: [react/tsconfig.json](mdc:react/tsconfig.json) - TypeScript settings
+- **Component Config**: [react/components.json](mdc:react/components.json) - UI component configuration

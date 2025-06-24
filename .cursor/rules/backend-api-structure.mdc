@@ -1,0 +1,119 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Backend API Structure & Services Guide
+
+The backend is a FastAPI application with asyncio support, providing REST APIs and WebSocket functionality for the AI design agent.
+
+## Core Application Structure
+
+### Main Application
+- **Entry Point**: [server/main.py](mdc:server/main.py) - FastAPI app with lifespan management
+- **Dependencies**: [server/requirements.txt](mdc:server/requirements.txt) - Python package requirements
+- **Common Utilities**: [server/common.py](mdc:server/common.py) - Shared utilities and helpers
+
+## API Routes & Endpoints
+
+### Router Organization
+- **Routers Directory**: [server/routers/](mdc:server/routers/)
+  - [chat_router.py](mdc:server/routers/chat_router.py) - Chat/messaging endpoints
+  - [agent.py](mdc:server/routers/agent.py) - AI agent workflow endpoints
+  - [canvas.py](mdc:server/routers/canvas.py) - Canvas operations and management
+  - [config.py](mdc:server/routers/config.py) - Application configuration
+  - [settings.py](mdc:server/routers/settings.py) - User settings management
+  - [workspace.py](mdc:server/routers/workspace.py) - Workspace/project management
+  - [websocket_router.py](mdc:server/routers/websocket_router.py) - WebSocket connections
+
+### Specialized Endpoints
+- **Image Tools**: [server/routers/image_tools.py](mdc:server/routers/image_tools.py) - Image processing operations
+- **Video Tools**: [server/routers/video_tools.py](mdc:server/routers/video_tools.py) - Video generation/processing
+- **ComfyUI Integration**: [server/routers/comfyui_execution.py](mdc:server/routers/comfyui_execution.py) - ComfyUI workflow execution
+- **SSL Testing**: [server/routers/ssl_test.py](mdc:server/routers/ssl_test.py) - SSL/TLS testing utilities
+
+## Service Layer
+
+### Core Services
+- **Services Directory**: [server/services/](mdc:server/services/)
+  - [chat_service.py](mdc:server/services/chat_service.py) - Chat message handling and AI integration
+  - [config_service.py](mdc:server/services/config_service.py) - Configuration management
+  - [settings_service.py](mdc:server/services/settings_service.py) - User settings persistence
+  - [files_service.py](mdc:server/services/files_service.py) - File upload/download handling
+  - [utils_service.py](mdc:server/services/utils_service.py) - Common utility functions
+
+### Real-time Communication
+- **WebSocket Services**: 
+  - [websocket_service.py](mdc:server/services/websocket_service.py) - WebSocket message handling
+  - [websocket_state.py](mdc:server/services/websocket_state.py) - WebSocket connection state management
+  - [stream_service.py](mdc:server/services/stream_service.py) - Streaming response handling
+
+### AI & Integration Services
+- **LangGraph Service**: [server/services/langgraph_service.py](mdc:server/services/langgraph_service.py) - AI agent workflow orchestration
+- **MCP Service**: [server/services/mcp.py](mdc:server/services/mcp.py) - Model Context Protocol integration
+- **Database Service**: [server/services/db_service.py](mdc:server/services/db_service.py) - SQLite database operations
+
+## Database & Migrations
+
+### Migration System
+- **Migrations Directory**: [server/services/migrations/](mdc:server/services/migrations/)
+  - [manager.py](mdc:server/services/migrations/manager.py) - Migration management
+  - [v1_initial_schema.py](mdc:server/services/migrations/v1_initial_schema.py) - Initial database schema
+  - [v2_add_canvases.py](mdc:server/services/migrations/v2_add_canvases.py) - Canvas table additions
+  - [v3_add_comfy_workflow.py](mdc:server/services/migrations/v3_add_comfy_workflow.py) - ComfyUI workflow schema
+
+## AI Tools & Integrations
+
+### Image Generation Tools
+- **Tools Directory**: [server/tools/](mdc:server/tools/)
+  - [image_generators.py](mdc:server/tools/image_generators.py) - Main image generation orchestrator
+  - [write_plan.py](mdc:server/tools/write_plan.py) - AI planning and workflow tools
+
+### Image Generator Implementations
+- **Generator Directory**: [server/tools/img_generators/](mdc:server/tools/img_generators/)
+  - [base.py](mdc:server/tools/img_generators/base.py) - Base image generator interface
+  - [comfyui.py](mdc:server/tools/img_generators/comfyui.py) - ComfyUI integration
+  - [openai.py](mdc:server/tools/img_generators/openai.py) - OpenAI DALL-E integration
+  - [replicate.py](mdc:server/tools/img_generators/replicate.py) - Replicate API integration
+  - [jaaz.py](mdc:server/tools/img_generators/jaaz.py) - Jaaz cloud service integration
+  - [wavespeed.py](mdc:server/tools/img_generators/wavespeed.py) - Wavespeed integration
+
+## Configuration & Assets
+
+### Workflow Assets
+- **Asset Directory**: [server/asset/](mdc:server/asset/)
+  - [default_comfy_t2i_workflow.json](mdc:server/asset/default_comfy_t2i_workflow.json) - Default text-to-image workflow
+  - [flux_comfy_workflow.json](mdc:server/asset/flux_comfy_workflow.json) - Flux model workflow configuration
+
+### Data Models
+- **Models Directory**: [server/models/](mdc:server/models/)
+  - [config_model.py](mdc:server/models/config_model.py) - Configuration data models
+
+### Utilities
+- **Utils Directory**: [server/utils/](mdc:server/utils/)
+  - [http_client.py](mdc:server/utils/http_client.py) - HTTP client utilities
+
+## Key Integration Points
+
+### AI Model Providers
+- **OpenAI**: GPT models for chat and image generation
+- **Anthropic**: Claude models for advanced reasoning
+- **Ollama**: Local LLM execution
+- **Replicate**: Cloud-based model hosting
+- **ComfyUI**: Local Stable Diffusion workflows
+
+### Real-time Features
+- **WebSocket**: Bidirectional communication for live updates
+- **Streaming**: Progressive response delivery for long-running operations
+- **Event System**: Asynchronous event handling across services
+
+### File & Media Handling
+- **Upload/Download**: File transfer capabilities
+- **Image Processing**: Image manipulation and optimization
+- **Video Processing**: Video generation and editing workflows
+
+## Development & Testing
+
+- **PyInstaller Spec**: [server/main.spec](mdc:server/main.spec) - Executable packaging configuration
+- **User Data**: [server/user_data/](mdc:server/user_data/) - Local user data storage
+- **Testing**: Unit tests located in [electron/test/](mdc:electron/test/) directory

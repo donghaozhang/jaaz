@@ -1,0 +1,172 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# AI Integrations & Model Management
+
+This guide covers the AI model integrations, ComfyUI workflows, and agent orchestration in the Jaaz application.
+
+## AI Model Providers
+
+### Supported Providers
+- **OpenAI**: GPT models for chat and DALL-E for image generation
+- **Anthropic**: Claude models for advanced reasoning and conversation
+- **Ollama**: Local LLM execution for privacy and offline usage
+- **Replicate**: Cloud-based model hosting for various AI models
+- **Google**: Gemini models for multimodal AI capabilities
+
+### Provider Configuration
+- **API Keys**: Stored securely in user settings via [server/services/settings_service.py](mdc:server/services/settings_service.py)
+- **Model Selection**: Dynamic model selection in [react/src/components/chat/ModelSelector.tsx](mdc:react/src/components/chat/ModelSelector.tsx)
+- **Provider Settings**: Configuration UI in [react/src/components/settings/](mdc:react/src/components/settings/)
+
+## Image Generation System
+
+### Generator Architecture
+- **Base Interface**: [server/tools/img_generators/base.py](mdc:server/tools/img_generators/base.py) - Abstract base for all generators
+- **Main Orchestrator**: [server/tools/image_generators.py](mdc:server/tools/image_generators.py) - Coordinates different generators
+
+### Generator Implementations
+- **OpenAI DALL-E**: [server/tools/img_generators/openai.py](mdc:server/tools/img_generators/openai.py)
+- **Replicate API**: [server/tools/img_generators/replicate.py](mdc:server/tools/img_generators/replicate.py)
+- **ComfyUI Local**: [server/tools/img_generators/comfyui.py](mdc:server/tools/img_generators/comfyui.py)
+- **Jaaz Cloud**: [server/tools/img_generators/jaaz.py](mdc:server/tools/img_generators/jaaz.py)
+- **Wavespeed**: [server/tools/img_generators/wavespeed.py](mdc:server/tools/img_generators/wavespeed.py)
+
+### Image Generation Workflow
+1. **User Request**: User submits image generation prompt
+2. **Provider Selection**: System selects appropriate generator based on settings
+3. **Prompt Processing**: AI agent may enhance or modify the prompt
+4. **Generation**: Image generated using selected provider
+5. **Post-Processing**: Optional image processing and optimization
+6. **Delivery**: Image delivered to user interface
+
+## ComfyUI Integration
+
+### Installation & Management
+- **Auto-Installation**: [electron/comfyUIInstaller.js](mdc:electron/comfyUIInstaller.js) - Automated ComfyUI setup
+- **Process Management**: [electron/comfyUIManager.js](mdc:electron/comfyUIManager.js) - Start/stop ComfyUI processes
+- **Status Monitoring**: Real-time status checking and health monitoring
+
+### Workflow Configuration
+- **Default Workflow**: [server/asset/default_comfy_t2i_workflow.json](mdc:server/asset/default_comfy_t2i_workflow.json) - Basic text-to-image
+- **Flux Workflow**: [server/asset/flux_comfy_workflow.json](mdc:server/asset/flux_comfy_workflow.json) - Advanced Flux model workflow
+- **Custom Workflows**: User-defined workflows for specific use cases
+
+### ComfyUI Features
+- **Local Generation**: Privacy-focused local image generation
+- **Model Support**: Stable Diffusion, Flux Dev, and other models
+- **Workflow Execution**: Complex multi-step image generation pipelines
+- **Real-time Monitoring**: Progress tracking and result delivery
+
+### ComfyUI API Integration
+- **Execution Router**: [server/routers/comfyui_execution.py](mdc:server/routers/comfyui_execution.py) - ComfyUI API endpoints
+- **Workflow Submission**: Queue management and job submission
+- **Progress Tracking**: Real-time progress updates via WebSocket
+- **Result Retrieval**: Image download and processing
+
+## Agent Workflows & LangGraph
+
+### LangGraph Service
+- **Main Service**: [server/services/langgraph_service.py](mdc:server/services/langgraph_service.py) - Agent workflow orchestration
+- **Agent Router**: [server/routers/agent.py](mdc:server/routers/agent.py) - Agent API endpoints
+- **Workflow Tools**: [server/tools/write_plan.py](mdc:server/tools/write_plan.py) - Planning and execution tools
+
+### Agent Studio
+- **Visual Editor**: [react/src/components/agent_studio/AgentStudio.tsx](mdc:react/src/components/agent_studio/AgentStudio.tsx)
+- **Node System**: [react/src/components/agent_studio/AgentNode.tsx](mdc:react/src/components/agent_studio/AgentNode.tsx) - Workflow nodes
+- **Agent Settings**: [react/src/components/agent_studio/AgentSettings.tsx](mdc:react/src/components/agent_studio/AgentSettings.tsx)
+
+### Workflow Capabilities
+- **Multi-Step Planning**: AI agents can create and execute complex plans
+- **Image Generation Batching**: Generate multiple related images in sequence
+- **Context Awareness**: Agents maintain context across conversation turns
+- **Tool Integration**: Access to various tools and APIs
+
+## Chat & Conversation System
+
+### Chat Architecture
+- **Main Chat**: [react/src/components/chat/Chat.tsx](mdc:react/src/components/chat/Chat.tsx) - Primary chat interface
+- **Message Handling**: [react/src/components/chat/Message/](mdc:react/src/components/chat/Message/) - Message components
+- **Chat Service**: [server/services/chat_service.py](mdc:server/services/chat_service.py) - Backend chat logic
+
+### Message Types
+- **Regular Messages**: [react/src/components/chat/Message/Regular.tsx](mdc:react/src/components/chat/Message/Regular.tsx)
+- **Image Messages**: [react/src/components/chat/Message/Image.tsx](mdc:react/src/components/chat/Message/Image.tsx)
+- **Tool Calls**: [react/src/components/chat/Message/ToolCallContent.tsx](mdc:react/src/components/chat/Message/ToolCallContent.tsx)
+- **Plan Execution**: [react/src/components/chat/Message/WritePlanToolcall.tsx](mdc:react/src/components/chat/Message/WritePlanToolcall.tsx)
+
+### Real-time Features
+- **Streaming Responses**: Progressive message delivery
+- **WebSocket Integration**: Real-time updates and notifications
+- **Progress Tracking**: [react/src/components/chat/ToolcallProgressUpdate.tsx](mdc:react/src/components/chat/ToolcallProgressUpdate.tsx)
+
+## Model Context Protocol (MCP)
+
+### MCP Integration
+- **MCP Service**: [server/services/mcp.py](mdc:server/services/mcp.py) - Model Context Protocol implementation
+- **Context Management**: Advanced context handling for AI models
+- **Tool Integration**: Seamless integration with external tools and services
+
+### Benefits
+- **Enhanced Context**: Better context understanding across conversations
+- **Tool Orchestration**: Coordinated use of multiple AI tools
+- **Memory Management**: Efficient context window management
+
+## Local AI & Ollama
+
+### Ollama Integration
+- **Local Models**: Support for locally hosted LLM models
+- **Privacy First**: All processing happens locally
+- **Offline Capability**: Work without internet connection
+- **Model Management**: Download and manage local models
+
+### Configuration
+- **Ollama Settings**: Configure local Ollama instance
+- **Model Selection**: Choose from available local models
+- **Performance Tuning**: Optimize for local hardware
+
+## Video Generation (Upcoming)
+
+### Planned Features
+- **Video Tools**: [server/routers/video_tools.py](mdc:server/routers/video_tools.py) - Video processing endpoints
+- **Video Generators**: [server/routers/video_generators.py](mdc:server/routers/video_generators.py) - Video generation services
+- **Supported Models**: Wan2.1, Kling, and other video generation models
+
+### Video Workflows
+- **Video Creation**: AI-powered video generation from text/images
+- **Video Editing**: Automated video editing and enhancement
+- **Storyboard to Video**: Convert storyboards to animated videos
+
+## Error Handling & Reliability
+
+### Graceful Degradation
+- **Provider Fallback**: Automatic fallback to alternative providers
+- **Error Recovery**: Robust error handling and recovery mechanisms
+- **User Feedback**: Clear error messages and suggested actions
+
+### Monitoring & Logging
+- **API Monitoring**: Track API usage and performance
+- **Error Logging**: Comprehensive error logging and reporting
+- **Performance Metrics**: Monitor generation times and success rates
+
+## Best Practices
+
+### AI Integration Guidelines
+- **Rate Limiting**: Respect API rate limits and implement backoff strategies
+- **Cost Management**: Monitor and control API usage costs
+- **Quality Control**: Implement content filtering and quality checks
+- **User Experience**: Provide clear feedback and progress indicators
+
+### Security Considerations
+- **API Key Security**: Secure storage and transmission of API keys
+- **Content Filtering**: Implement appropriate content filtering
+- **Privacy Protection**: Respect user privacy and data protection
+- **Local Processing**: Prefer local processing when possible
+
+### Performance Optimization
+- **Caching**: Cache frequently used models and results
+- **Parallel Processing**: Execute multiple operations concurrently
+- **Resource Management**: Efficient use of system resources
+- **Background Processing**: Use background tasks for long-running operations
