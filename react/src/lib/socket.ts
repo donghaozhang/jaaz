@@ -29,8 +29,8 @@ export class SocketIOManager {
       }
 
       this.socket = io(url, {
-        transports: ['websocket'],
-        upgrade: false,
+        transports: ['polling', 'websocket'],
+        upgrade: true,
         reconnection: true,
         reconnectionAttempts: this.maxReconnectAttempts,
         reconnectionDelay: this.reconnectDelay,
