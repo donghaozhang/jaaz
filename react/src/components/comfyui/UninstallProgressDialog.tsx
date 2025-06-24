@@ -146,6 +146,9 @@ const UninstallProgressDialog = ({ open, onOpenChange, onUninstallComplete, onCo
       <DialogContent className="max-w-2xl">
         <DialogHeader>
           <DialogTitle>🗑️ {t('settings:comfyui.uninstallButton')}</DialogTitle>
+          <DialogDescription>
+            {t('settings:comfyui.uninstallProgress.description')}
+          </DialogDescription>
         </DialogHeader>
 
         {isConfirming ? (

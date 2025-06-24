@@ -4,7 +4,13 @@ import { useEffect, useState } from 'react'
 import { useRef } from 'react'
 import { Input } from '../ui/input'
 import { Textarea } from '../ui/textarea'
-import { DialogContent, DialogHeader, DialogTitle, Dialog } from '../ui/dialog'
+import {
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  Dialog,
+  DialogDescription,
+} from '../ui/dialog'
 import { toast } from 'sonner'
 import { useTranslation } from 'react-i18next'
 
@@ -210,6 +216,9 @@ function AddWorkflowDialog({ onClose }: { onClose: () => void }) {
           </div>
           {error && <p className="text-red-500">{error}</p>}
         </DialogHeader>
+        <DialogDescription className="hidden">
+          Add a new ComfyUI workflow by uploading an API JSON file.
+        </DialogDescription>
         <Input
           type="text"
           style={{ flexShrink: 0 }}

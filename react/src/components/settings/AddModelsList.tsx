@@ -10,7 +10,7 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Plus, Trash2 } from 'lucide-react'
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
+import { Dialog, DialogContent, DialogTrigger, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog'
 
 export type ModelItem = {
   name: string
@@ -113,6 +113,12 @@ export default function AddModelsList({
             </Button>
           </DialogTrigger>
           <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add a new model</DialogTitle>
+              <DialogDescription>
+                Enter the name of the model you want to add.
+              </DialogDescription>
+            </DialogHeader>
             <div className="space-y-5">
               <Label>Model Name</Label>
               <Input

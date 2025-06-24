@@ -1,5 +1,12 @@
 import { BotIcon } from 'lucide-react'
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../ui/dialog'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { useState } from 'react'
@@ -29,9 +36,12 @@ export default function AgentSettings() {
         </Button>
       </DialogTrigger>
       <DialogContent className="max-w-2xl">
-        <div className="flex items-center justify-between">
-          <h3 className="text-2xl font-bold">Agent Settings</h3>
-        </div>
+        <DialogHeader>
+          <DialogTitle>Agent Settings</DialogTitle>
+          <DialogDescription>
+            Configure the agent's system prompt.
+          </DialogDescription>
+        </DialogHeader>
         <div className="flex items-center justify-between">
           <p className="font-bold">System Prompt</p>
           <Button size={'sm'} variant={'outline'} onClick={handleReset}>

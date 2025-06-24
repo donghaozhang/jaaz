@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Button } from '../ui/button'
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../ui/dialog'
 import { startDeviceAuth, pollDeviceAuth, saveAuthData } from '../../api/auth'
 import { updateJaazApiKey } from '../../api/config'
 import { useAuth } from '../../contexts/AuthContext'
@@ -135,13 +135,12 @@ export function LoginDialog() {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('common:auth.loginToJaaz')}</DialogTitle>
+          <DialogDescription>
+            {t('common:auth.loginDescription')}
+          </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
-          <p className="text-sm text-muted-foreground">
-            {t('common:auth.loginDescription')}
-          </p>
-
           <div className="flex gap-2">
             <Button
               onClick={handleLogin}

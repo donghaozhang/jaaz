@@ -5,7 +5,14 @@ import { Card, CardContent, CardHeader } from '../ui/card'
 import { PlusIcon } from 'lucide-react'
 
 import Editor from './Editor'
-import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../ui/dialog'
 
 // Sample data for knowledge base items
 const knowledgeItems = [
@@ -33,6 +40,12 @@ export default function Knowledge() {
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-[90vw]">
+            <DialogHeader>
+              <DialogTitle>Add New Knowledge</DialogTitle>
+              <DialogDescription>
+                Use the editor to add new knowledge.
+              </DialogDescription>
+            </DialogHeader>
             <Editor />
           </DialogContent>
         </Dialog>
