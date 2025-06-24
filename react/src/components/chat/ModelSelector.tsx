@@ -55,7 +55,7 @@ const ModelSelector: React.FC = () => {
   return (
     <>
       <Select
-        value={textModel?.provider + ':' + textModel?.model}
+        value={textModel ? `${textModel.provider}:${textModel.model}` : ''}
         onValueChange={(value) => {
           localStorage.setItem('text_model', value)
           setTextModel(
@@ -95,7 +95,7 @@ const ModelSelector: React.FC = () => {
         </SelectContent>
       </Select>
       <Select
-        value={imageModel?.provider + ':' + imageModel?.model}
+        value={imageModel ? `${imageModel.provider}:${imageModel.model}` : ''}
         onValueChange={(value) => {
           localStorage.setItem('image_model', value)
           setImageModel(
