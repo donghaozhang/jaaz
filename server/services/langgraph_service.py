@@ -55,7 +55,7 @@ async def langgraph_agent(messages, canvas_id, session_id, text_model, image_mod
         url = text_model.get('url')
         api_key = config_service.app_config.get(provider, {}).get("api_key", "")
         # TODO: Verify if max token is working
-        max_tokens = text_model.get('max_tokens', 8148)
+        max_tokens = text_model.get('max_tokens', 4096)
         if provider == 'ollama':
             model = ChatOllama(
                 model=model,
@@ -87,7 +87,16 @@ async def langgraph_agent(messages, canvas_id, session_id, text_model, image_mod
         agent = create_react_agent(
             model=model,
             tools=[generate_image],
-            prompt='You are a profession design agent, specializing in visual design.'
+            prompt='''You are a professional design agent specializing in visual design and image generation.
+
+IMPORTANT: When users request image generation (using phrases like "generate image", "/generate", "create image", etc.), you MUST use the generate_image tool to actually create the image.
+
+Instructions:
+1. For image requests, analyze the prompt and call generate_image with:
+   - prompt: Detailed description for image generation
+   - aspect_ratio: Choose from 1:1, 16:9, 4:3, 3:4, 9:16 based on content
+2. Always use tools when available rather than just describing what you would do
+3. Be helpful and creative in interpreting user requests'''
         )
         ctx = {
             'canvas_id': canvas_id,
@@ -228,7 +237,7 @@ async def langgraph_multi_agent(messages, canvas_id, session_id, text_model, ima
         url = text_model.get('url')
         api_key = config_service.app_config.get(provider, {}).get("api_key", "")
         # TODO: Verify if max token is working
-        max_tokens = text_model.get('max_tokens', 8148)
+        max_tokens = text_model.get('max_tokens', 4096)
         if provider == 'ollama':
             model = ChatOllama(
                 model=model,
@@ -269,28 +278,16 @@ async def langgraph_multi_agent(messages, canvas_id, session_id, text_model, ima
                 }
                 ],
                 'system_prompt': """
-            You are a design planning writing agent. You should do:
-            - Step 1. write a execution plan for the user's request using the same language as the user's prompt. You should breakdown the task into high level steps for the other agents to execute.
-            - Step 2. If it is a image generation task, transfer the task to image_designer agent to generate the image based on the plan IMMEDIATELY, no need to ask for user's approval.
+            You are a design planning agent. For ALL image generation requests:
+            
+            1. Write a brief execution plan using write_plan tool
+            2. IMMEDIATELY transfer to image_designer agent to generate the actual image
+            3. Do NOT generate text descriptions of images - let image_designer create real images
 
-            IMPORTANT RULES:
-            1. You MUST complete the write_plan tool call and wait for its result BEFORE attempting to transfer to another agent
-            2. Do NOT call multiple tools simultaneously
-            3. Always wait for the result of one tool call before making another
-
-            For example, if the user ask to 'Generate a ads video for a lipstick product', the example plan is :
-            ```
-            [{
-                "title": "Design the video script",
-                "description": "Design the video script for the ads video"
-            }, {
-                "title": "Generate the images",
-                "description": "Design image prompts, generate the images for the story board"
-            }, {
-                "title": "Generate the video clips",
-                "description": "Generate the video clips from the images"
-            }]
-            ```
+            CRITICAL: For any request containing "generate", "/generate", "create image", or similar:
+            - Use write_plan tool first
+            - Then transfer to image_designer agent immediately
+            - Do NOT provide placeholder text or descriptions
             """,
                 'knowledge': [],
                 'handoffs': [
@@ -311,7 +308,20 @@ async def langgraph_multi_agent(messages, canvas_id, session_id, text_model, ima
                         'tool': 'generate_image',
                     }
                 ],
-                'system_prompt': system_prompt,
+                'system_prompt': '''You are an image generation specialist. Your primary job is to create actual images using the generate_image tool.
+
+CRITICAL INSTRUCTIONS:
+1. When you receive an image generation request, immediately use the generate_image tool
+2. Extract the main visual elements from the user's request
+3. Choose appropriate aspect_ratio: 1:1, 16:9, 4:3, 3:4, or 9:16
+4. Generate detailed, descriptive prompts for high-quality image generation
+5. ALWAYS call generate_image tool - never just describe what the image would look like
+
+Example: If user wants "a dragon", call generate_image with:
+- prompt: "Majestic dragon with detailed scales, powerful wings, fantasy art style"
+- aspect_ratio: "16:9" (or appropriate ratio)
+
+Do NOT provide text descriptions - create actual images!''',
                 'knowledge': [],
                 'handoffs': []
             }

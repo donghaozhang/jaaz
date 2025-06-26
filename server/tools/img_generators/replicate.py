@@ -1,5 +1,6 @@
 from typing import Optional
 import os
+import asyncio
 import traceback
 from .base import ImageGenerator, get_image_info_and_save, generate_image_id
 from services.config_service import config_service, FILES_DIR
@@ -44,6 +45,31 @@ class ReplicateGenerator(ImageGenerator):
             async with HttpClient.create() as client:
                 response = await client.post(url, headers=headers, json=data)
                 res = response.json()
+
+                # Handle both immediate completion (200) and async processing (201)
+                if response.status_code == 201:
+                    # Job started, wait for completion
+                    get_url = res.get('urls', {}).get('get', '')
+                    if not get_url:
+                        raise Exception('Replicate job started but no get URL provided')
+                    
+                    # Poll for completion (max 60 seconds)
+                    for attempt in range(60):
+                        await asyncio.sleep(1)
+                        poll_response = await client.get(get_url, headers=headers)
+                        poll_res = poll_response.json()
+                        
+                        status = poll_res.get('status', '')
+                        if status == 'succeeded':
+                            res = poll_res
+                            break
+                        elif status in ['failed', 'canceled']:
+                            error_msg = poll_res.get('error', 'Unknown error')
+                            raise Exception(f'Replicate generation failed: {error_msg}')
+                        # Continue polling if status is 'starting' or 'processing'
+                    
+                    if poll_res.get('status') != 'succeeded':
+                        raise Exception('Replicate generation timed out after 60 seconds')
 
             output = res.get('output', '')
             if not output:
