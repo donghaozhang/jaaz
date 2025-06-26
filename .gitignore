@@ -16,3 +16,19 @@ build
 
 # User data
 user_data/
+
+# Python virtual environments
+jaaz-backend-venv/
+jaaz-backend-env/
+venv/
+env/
+
+# Log files
+*.log
+server.log
+
+# Test files (experimental/debugging)
+test_*.py
+!test_image_gen.py
+!test_real_image_gen.py
+!test_chat_api.py
