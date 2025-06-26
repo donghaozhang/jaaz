@@ -61,14 +61,29 @@ async def generate_image(
     input_image: Optional[str] = None,
 ) -> str:
     print('🛠️ tool_call_id', tool_call_id)
-    ctx = config.get('configurable', {})
+    print('🔍 Config type:', type(config))
+    print('🔍 Full config:', config)
+    
+    try:
+        ctx = config.get('configurable', {})
+        print('🔍 Context:', ctx)
+    except Exception as e:
+        print('❌ Error getting configurable:', e)
+        ctx = {}
     canvas_id = ctx.get('canvas_id', '')
     session_id = ctx.get('session_id', '')
     print('🛠️canvas_id', canvas_id, 'session_id', session_id)
     # Inject the tool call id into the context
     ctx['tool_call_id'] = tool_call_id
 
-    image_model = ctx.get('model_info', {}).get('image', {})
+    model_info = ctx.get('model_info', {})
+    print('🔍 Model info:', model_info)
+    if model_info is None:
+        print('❌ model_info is None!')
+        raise ValueError("model_info is None")
+    
+    image_model = model_info.get('image', {})
+    print('🔍 Image model:', image_model)
     if image_model is None:
         raise ValueError("Image model is not selected")
     model = image_model.get('model', '')
@@ -113,7 +128,8 @@ async def generate_image(
             **extra_kwargs
         )
 
-        file_id = generate_file_id()
+        # Use filename as the file_id for consistency
+        file_id = filename
         url = f'/api/file/{filename}'
 
         file_data = {
@@ -123,37 +139,58 @@ async def generate_image(
             'created': int(time.time() * 1000),
         }
 
-        new_image_element = await generate_new_image_element(canvas_id, file_id, {
-            'width': width,
-            'height': height,
-        })
+        # Add image to canvas if canvas_id is provided
+        if canvas_id:
+            try:
+                # Create canvas element for the generated image
+                image_element = await generate_new_image_element(canvas_id, file_id, {
+                    'width': width,
+                    'height': height,
+                    'mimeType': mime_type
+                })
+                
+                if image_element:
+                    # Add the image element to the canvas
+                    canvas = await db_service.get_canvas_data(canvas_id)
+                    if canvas:
+                        canvas_data = canvas.get('data', {})
+                        elements = canvas_data.get('elements', [])
+                        elements.append(image_element)
+                        
+                        # Update canvas with new element
+                        canvas_data['elements'] = elements
+                        await db_service.save_canvas_data(canvas_id, json.dumps(canvas_data))
+                        
+                        # Notify frontend about canvas update with proper format for Excalidraw
+                        await broadcast_session_update(session_id, canvas_id, {
+                            'type': 'image_generated',
+                            'canvas_id': canvas_id,
+                            'element': image_element,
+                            'file': {
+                                'id': file_id,
+                                'dataURL': url,
+                                'mimeType': mime_type,
+                                'created': int(time.time() * 1000),
+                            }
+                        })
+                        
+                        print(f"🎨 Image added to canvas: {canvas_id}")
+                    else:
+                        print(f"⚠️  Canvas {canvas_id} not found")
+                else:
+                    print(f"⚠️  Failed to create canvas element")
+            except Exception as canvas_error:
+                print(f"⚠️  Canvas integration error: {canvas_error}")
+                # Continue even if canvas integration fails
+        
+        # Use relative URL that works through frontend proxy
+        image_url = f"/api/file/{filename}"
+        
+        print(f"✅ Image generated successfully: {filename}")
+        print(f"📁 File path: /home/zdhpe/GenAI-tool/jaaz-source/server/user_data/files/{filename}")
+        print(f"🌐 Image URL: {image_url}")
 
-        # update the canvas data, add the new image element
-        canvas_data = await db_service.get_canvas_data(canvas_id)
-        if 'data' not in canvas_data:
-            canvas_data['data'] = {}
-        if 'elements' not in canvas_data['data']:
-            canvas_data['data']['elements'] = []
-        if 'files' not in canvas_data['data']:
-            canvas_data['data']['files'] = {}
-
-        canvas_data['data']['elements'].append(new_image_element)
-        canvas_data['data']['files'][file_id] = file_data
-
-        image_url = f"http://localhost:{DEFAULT_PORT}/api/file/{filename}"
-
-        print('🛠️canvas_data', canvas_data)
-
-        await db_service.save_canvas_data(canvas_id, json.dumps(canvas_data['data']))
-
-        await broadcast_session_update(session_id, canvas_id, {
-            'type': 'image_generated',
-            'element': new_image_element,
-            'file': file_data,
-            'image_url': image_url,
-        })
-
-        return f"image generated successfully ![image_id: {filename}]({image_url})"
+        return f"✅ Image generated successfully! ![{filename}]({image_url})"
 
     except Exception as e:
         print(f"Error generating image: {str(e)}")
@@ -168,6 +205,10 @@ print('🛠️', generate_image.args_schema.model_json_schema())
 
 async def generate_new_image_element(canvas_id: str, fileid: str, image_data: dict):
     canvas = await db_service.get_canvas_data(canvas_id)
+    if canvas is None:
+        print(f"⚠️  Canvas {canvas_id} not found, skipping canvas element creation")
+        return
+    
     canvas_data = canvas.get('data', {})
     elements = canvas_data.get('elements', [])
 

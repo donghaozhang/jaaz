@@ -53,7 +53,16 @@ async def langgraph_agent(messages, canvas_id, session_id, text_model, image_mod
         model = text_model.get('model')
         provider = text_model.get('provider')
         url = text_model.get('url')
-        api_key = config_service.app_config.get(provider, {}).get("api_key", "")
+        
+        # Check if model should be mapped to direct Anthropic (has provider prefix like "anthropic/")
+        if provider == 'anthropic' and model.startswith('anthropic/'):
+            # Map "anthropic/claude-3.5-sonnet" to "claude-3-5-sonnet-20241022" for direct Anthropic API
+            if model == "anthropic/claude-3.5-sonnet":
+                model = "claude-3-5-sonnet-20241022"
+            api_key = config_service.app_config.get('anthropic', {}).get("api_key", "")
+        else:
+            api_key = config_service.app_config.get(provider, {}).get("api_key", "")
+        
         # TODO: Verify if max token is working
         max_tokens = text_model.get('max_tokens', 4096)
         if provider == 'ollama':
@@ -108,7 +117,7 @@ Instructions:
         tool_calls: list[ToolCall] = []
         async for chunk in agent.astream(
             {"messages": messages},
-            config=ctx,
+            config={"configurable": ctx},
             stream_mode=["updates", "messages", "custom"]
         ):
             chunk_type = chunk[0]
@@ -235,7 +244,16 @@ async def langgraph_multi_agent(messages, canvas_id, session_id, text_model, ima
         model = text_model.get('model')
         provider = text_model.get('provider')
         url = text_model.get('url')
-        api_key = config_service.app_config.get(provider, {}).get("api_key", "")
+        
+        # Check if model should be mapped to direct Anthropic (has provider prefix like "anthropic/")
+        if provider == 'anthropic' and model.startswith('anthropic/'):
+            # Map "anthropic/claude-3.5-sonnet" to "claude-3-5-sonnet-20241022" for direct Anthropic API
+            if model == "anthropic/claude-3.5-sonnet":
+                model = "claude-3-5-sonnet-20241022"
+            api_key = config_service.app_config.get('anthropic', {}).get("api_key", "")
+        else:
+            api_key = config_service.app_config.get(provider, {}).get("api_key", "")
+        
         # TODO: Verify if max token is working
         max_tokens = text_model.get('max_tokens', 4096)
         if provider == 'ollama':
@@ -378,7 +396,7 @@ Do NOT provide text descriptions - create actual images!''',
 
         async for chunk in swarm.astream(
             {"messages": messages},
-            config=ctx,
+            config={"configurable": ctx},
             stream_mode=["messages", "custom", 'values']
         ):
             chunk_type = chunk[0]

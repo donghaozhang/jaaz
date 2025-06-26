@@ -10,6 +10,7 @@ import routers.websocket_router
 from fastapi.responses import FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 import asyncio
 import argparse
 from contextlib import asynccontextmanager
@@ -28,6 +29,15 @@ async def lifespan(app: FastAPI):
     # onshutdown
 
 app = FastAPI(lifespan=lifespan)
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:8080", "http://localhost:8081", "http://localhost:8082"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Include routers
 app.include_router(config.router)
