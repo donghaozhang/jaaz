@@ -61,6 +61,15 @@ async def langgraph_agent(messages, canvas_id, session_id, text_model, image_mod
                 model=model,
                 base_url=url,
             )
+        elif provider == 'anthropic':
+            from langchain_anthropic import ChatAnthropic
+            model = ChatAnthropic(
+                model=model,
+                api_key=api_key,
+                timeout=15,
+                temperature=0,
+                max_tokens=max_tokens,
+            )
         else:
             # Create httpx client with SSL configuration for ChatOpenAI
             http_client = HttpClient.create_sync_client(timeout=15)
@@ -224,6 +233,15 @@ async def langgraph_multi_agent(messages, canvas_id, session_id, text_model, ima
             model = ChatOllama(
                 model=model,
                 base_url=url,
+            )
+        elif provider == 'anthropic':
+            from langchain_anthropic import ChatAnthropic
+            model = ChatAnthropic(
+                model=model,
+                api_key=api_key,
+                timeout=15,
+                temperature=0,
+                max_tokens=max_tokens,
             )
         else:
             # Create httpx client with SSL configuration for ChatOpenAI

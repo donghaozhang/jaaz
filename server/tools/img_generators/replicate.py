@@ -46,7 +46,7 @@ class ReplicateGenerator(ImageGenerator):
                 res = response.json()
 
             output = res.get('output', '')
-            if output == '':
+            if not output:
                 if res.get('detail', '') != '':
                     raise Exception(
                         f'Replicate image generation failed: {res.get("detail", "")}')
@@ -54,12 +54,18 @@ class ReplicateGenerator(ImageGenerator):
                     raise Exception(
                         'Replicate image generation failed: no output url found')
 
+            # Handle both single URL and list of URLs
+            if isinstance(output, list):
+                image_url = output[0]  # Use first image
+            else:
+                image_url = output  # Single URL
+
             image_id = generate_image_id()
             print('🦄image generation image_id', image_id)
 
             # get image dimensions
             mime_type, width, height, extension = await get_image_info_and_save(
-                output, os.path.join(FILES_DIR, f'{image_id}')
+                image_url, os.path.join(FILES_DIR, f'{image_id}')
             )
             filename = f'{image_id}.{extension}'
             return mime_type, width, height, filename
